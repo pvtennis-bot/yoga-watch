@@ -1,0 +1,149 @@
+name: APK3
+on: [push, workflow_dispatch]
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Progetto
+        run: |
+          mkdir -p app/src/main/java/it/patri/yoga
+          cat > settings.gradle <<'E'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          include ':app'
+          E
+          cat > build.gradle <<'E'
+          plugins { id 'com.android.application' version '8.7.3' apply false }
+          E
+          cat > app/build.gradle <<'E'
+          plugins { id 'com.android.application' }
+          android {
+            namespace 'it.patri.yoga'
+            compileSdk 35
+            defaultConfig { applicationId 'it.patri.yoga'; minSdk 30; targetSdk 34; versionCode 3; versionName '2.0' }
+            compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+          }
+          E
+          cat > app/src/main/AndroidManifest.xml <<'E'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+          <uses-feature android:name="android.hardware.type.watch"/>
+          <application android:label="Yoga">
+          <meta-data android:name="com.google.android.wearable.standalone" android:value="true"/>
+          <activity android:name=".MainActivity" android:exported="true" android:label="Yoga">
+          <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+          </activity></application></manifest>
+          E
+          cat > app/src/main/java/it/patri/yoga/MainActivity.java <<'E'
+          package it.patri.yoga;
+          import android.app.Activity;
+          import android.content.Context;
+          import android.graphics.Canvas;
+          import android.graphics.Paint;
+          import android.os.Bundle;
+          import android.view.MotionEvent;
+          import android.view.View;
+          import android.view.WindowManager;
+          public class MainActivity extends Activity {
+            static final String[][] P = {
+              {"Colonna 1","Apanasana","Ginocchia al petto","Spalle a terra, lombare morbida. Dondola piano.","5-8 respiri",
+               "G|C 52 110 10|L 64 114 116 114|L 116 114 112 76 86 66|L 68 112 92 98 110 80"},
+              {"Colonna 2","Marjariasana","Gatto e mucca","Inspira e inarca, espira e fai la gobba.","8-10 cicli",
+               "G|L 62 72 76 56 100 48 124 56 136 74|L 62 72 62 124|L 136 74 136 124|L 136 124 158 124|L 62 72 56 82|C 54 90 9"},
+              {"Anche 3","Anjaneyasana","Affondo basso","Bacino avanti, braccia al cielo. Cambia lato.","5 respiri per lato",
+               "G|L 42 124 62 124 96 96|L 96 96 136 92 140 124|L 96 96 96 62|C 94 40 9|L 96 62 66 32|L 96 62 126 32"},
+              {"Anche 4","Malasana","La ghirlanda","Piedi aperti, palmi uniti, gomiti sulle ginocchia.","5-8 respiri",
+               "G|C 100 36 11|L 100 48 100 84|L 100 84 58 92 74 124|L 100 84 142 92 126 124|L 92 56 66 88 98 64|L 108 56 134 88 102 64"},
+              {"Equilibrio 5","Tadasana","La montagna","Dita intrecciate, allungati in alto.","5 respiri",
+               "G|C 100 52 10|L 100 64 100 96|L 100 96 92 124|L 100 96 108 124|L 100 68 76 46 100 16|L 100 68 124 46 100 16"},
+              {"Chiusura","Namaste","","Resta seduto qualche respiro. Mai forzare.","",
+               "C 100 52 12|L 100 66 100 96|L 86 96 100 74 114 96"}
+            };
+            int i = 0;
+            Vista v;
+            @Override
+            protected void onCreate(Bundle b) {
+              super.onCreate(b);
+              getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+              v = new Vista(this);
+              setContentView(v);
+            }
+            class Vista extends View {
+              Paint s = new Paint(Paint.ANTI_ALIAS_FLAG);
+              Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
+              Vista(Context c) {
+                super(c);
+                s.setStyle(Paint.Style.STROKE);
+                s.setStrokeCap(Paint.Cap.ROUND);
+                s.setStrokeJoin(Paint.Join.ROUND);
+                t.setTextAlign(Paint.Align.CENTER);
+              }
+              @Override
+              protected void onDraw(Canvas c) {
+                float w = getWidth(), h = getHeight();
+                c.drawColor(0xFF000000);
+                String[] q = P[i];
+                t.setColor(0xFF8C857A); t.setTextSize(w * 0.037f);
+                c.drawText(q[0], w / 2, h * 0.19f, t);
+                t.setColor(0xFFE3C08D); t.setTextSize(w * 0.082f);
+                c.drawText(q[1], w / 2, h * 0.28f, t);
+                t.setColor(0xFF8C857A); t.setTextSize(w * 0.040f);
+                c.drawText(q[2], w / 2, h * 0.33f, t);
+                float k = w * 0.58f / 200f;
+                float ox = w / 2 - 100 * k, oy = h * 0.50f - 70 * k;
+                s.setStrokeWidth(5 * k);
+                for (String part : q[5].split("\\|")) {
+                  String[] n = part.split(" ");
+                  if (n[0].equals("G")) {
+                    s.setColor(0xFF3A3733); s.setStrokeWidth(3 * k);
+                    c.drawLine(ox + 18 * k, oy + 126 * k, ox + 182 * k, oy + 126 * k, s);
+                    s.setStrokeWidth(5 * k); continue;
+                  }
+                  s.setColor(0xFFF0EAE0);
+                  if (n[0].equals("C")) {
+                    c.drawCircle(ox + f(n[1]) * k, oy + f(n[2]) * k, f(n[3]) * k, s);
+                  } else {
+                    for (int j = 1; j + 3 < n.length; j += 2)
+                      c.drawLine(ox + f(n[j]) * k, oy + f(n[j + 1]) * k,
+                                 ox + f(n[j + 2]) * k, oy + f(n[j + 3]) * k, s);
+                  }
+                }
+                t.setColor(0xFFF0EAE0); t.setTextSize(w * 0.042f);
+                float y = h * 0.72f;
+                String riga = "";
+                for (String p : q[3].split(" ")) {
+                  String prova = riga.isEmpty() ? p : riga + " " + p;
+                  if (t.measureText(prova) > w * 0.66f) {
+                    c.drawText(riga, w / 2, y, t); y += w * 0.052f; riga = p;
+                  } else riga = prova;
+                }
+                c.drawText(riga, w / 2, y, t);
+                t.setColor(0xFF6E9B84); t.setTextSize(w * 0.040f);
+                c.drawText(q[4], w / 2, y + w * 0.075f, t);
+                t.setColor(0xFF8C857A); t.setTextSize(w * 0.045f);
+                c.drawText((i + 1) + " / " + P.length, w / 2, h * 0.93f, t);
+              }
+              float f(String x) { return Float.parseFloat(x); }
+              @Override
+              public boolean onTouchEvent(MotionEvent e) {
+                if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                  i = e.getX() < getWidth() / 2 ? Math.max(0, i - 1) : Math.min(P.length - 1, i + 1);
+                  invalidate();
+                }
+                return true;
+              }
+            }
+          }
+          E
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - run: gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yoga-apk3
+          path: app/build/outputs/apk/debug/*.apk
