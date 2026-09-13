@@ -1,0 +1,118 @@
+name: MENTAL
+on: [push, workflow_dispatch]
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Progetto
+        run: |
+          rm -rf m && mkdir -p m/app/src/main/java/it/patri/mental
+          cd m
+          cat > settings.gradle <<'E'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          include ':app'
+          E
+          cat > build.gradle <<'E'
+          plugins { id 'com.android.application' version '8.7.3' apply false }
+          E
+          cat > app/build.gradle <<'E'
+          plugins { id 'com.android.application' }
+          android {
+            namespace 'it.patri.mental'
+            compileSdk 35
+            defaultConfig { applicationId 'it.patri.mental'; minSdk 30; targetSdk 34; versionCode 1; versionName '1.0' }
+            compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17; encoding 'UTF-8' }
+          }
+          E
+          cat > app/src/main/AndroidManifest.xml <<'E'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+          <uses-feature android:name="android.hardware.type.watch"/>
+          <application android:label="Mental">
+          <meta-data android:name="com.google.android.wearable.standalone" android:value="true"/>
+          <activity android:name=".MainActivity" android:exported="true" android:label="Mental">
+          <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+          </activity></application></manifest>
+          E
+          cat > app/src/main/java/it/patri/mental/MainActivity.java <<'E'
+          package it.patri.mental;
+          import android.app.Activity;
+          import android.content.Context;
+          import android.graphics.Canvas;
+          import android.graphics.Paint;
+          import android.os.Bundle;
+          import android.view.MotionEvent;
+          import android.view.View;
+          import android.view.WindowManager;
+          public class MainActivity extends Activity {
+            static final String[][] P = {
+              {"DRILL M1 · livello 4","Scansione a tre punti","Prima di ogni punto importante, tre secondi di controllo del corpo.","Tocca a destra"},
+              {"SCANSIONE 1 di 3","Mano","La presa è tra 2 e 4? Se no: apri e richiudi.",""},
+              {"SCANSIONE 2 di 3","Spalla","È abbassata? Se no: espira e lasciala cadere.",""},
+              {"SCANSIONE 3 di 3","Mandibola","È sciolta? Se no: apri leggermente la bocca.",""},
+              {"POI","Entra nel punto","Consapevolezza corporea pre-punto. Rilascio della tensione accumulata.","Nideffer: interno ristretto"},
+              {"NOTE","Allenala a freddo","Usala solo prima del servizio, finché non diventa automatica.","Fine"}
+            };
+            @Override
+            protected void onCreate(Bundle b) {
+              super.onCreate(b);
+              getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+              setContentView(new Vista(this));
+            }
+            class Vista extends View {
+              int i = 0;
+              Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
+              Vista(Context c) { super(c); t.setTextAlign(Paint.Align.CENTER); }
+              float blocco(Canvas c, String s, float y, float w, float max, float lh) {
+                String riga = "";
+                for (String p : s.split(" ")) {
+                  String prova = riga.isEmpty() ? p : riga + " " + p;
+                  if (t.measureText(prova) > max) { c.drawText(riga, w / 2, y, t); y += lh; riga = p; }
+                  else riga = prova;
+                }
+                if (!riga.isEmpty()) { c.drawText(riga, w / 2, y, t); y += lh; }
+                return y;
+              }
+              @Override
+              protected void onDraw(Canvas c) {
+                float w = getWidth(), h = getHeight();
+                c.drawColor(0xFF000000);
+                String[] q = P[i];
+                float y = h * 0.22f;
+                t.setColor(0xFF8C857A); t.setTextSize(w * 0.038f);
+                y = blocco(c, q[0], y, w, w * 0.70f, w * 0.052f);
+                t.setColor(0xFFE3C08D); t.setTextSize(w * 0.080f);
+                y = blocco(c, q[1], y + w * 0.035f, w, w * 0.68f, w * 0.095f);
+                t.setColor(0xFFF0EAE0); t.setTextSize(w * 0.046f);
+                y = blocco(c, q[2], y + w * 0.045f, w, w * 0.66f, w * 0.058f);
+                if (!q[3].isEmpty()) {
+                  t.setColor(0xFF6E9B84); t.setTextSize(w * 0.038f);
+                  blocco(c, q[3], y + w * 0.04f, w, w * 0.66f, w * 0.050f);
+                }
+                t.setColor(0xFF8C857A); t.setTextSize(w * 0.042f);
+                c.drawText((i + 1) + " / " + P.length, w / 2, h * 0.94f, t);
+              }
+              @Override
+              public boolean onTouchEvent(MotionEvent e) {
+                if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                  i = e.getX() < getWidth() / 2 ? Math.max(0, i - 1) : Math.min(P.length - 1, i + 1);
+                  invalidate();
+                }
+                return true;
+              }
+            }
+          }
+          E
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - run: cd m && gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mental-apk
+          path: m/app/build/outputs/apk/debug/*.apk
