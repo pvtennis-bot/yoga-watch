@@ -1,0 +1,44 @@
+#M1 Scansione a tre punti
+DRILL M1 · livello 4|Scansione|Prima di ogni punto importante, tre secondi di controllo del corpo.|Tocca a destra
+1 di 3|Mano|La presa è tra 2 e 4? Se no: apri e richiudi.|
+2 di 3|Spalla|È abbassata? Se no: espira e lasciala cadere.|
+3 di 3|Mandibola|È sciolta? Se no: apri leggermente la bocca.|
+POI|Entra nel punto|Consapevolezza corporea pre-punto. Rilascio della tensione.|Nideffer: interno ristretto
+NOTE|Allenala a freddo|Usala solo prima del servizio, finché non diventa automatica.|
+#M2 Respirazione 4-2-6
+DRILL M2 · livello 4|Respiro 4-2-6|Espirazione più lunga dell'inspirazione: attiva il freno fisiologico.|
+1|Inspira|Dal naso, quattro secondi.|
+2|Trattieni|Due secondi.|
+3|Espira|Dalla bocca, sei secondi.|
+FOCUS|Abbassare l'arousal|Prima del servizio su punto critico e dopo un errore grave.|Sistema parasimpatico
+SE NON RIESCI|Solo l'espirazione|Espira lentamente e ignora il conteggio dell'inspirazione.|
+#M3 Routine pre-servizio
+DRILL M3 · livello 4|Routine|Sei passi fissi prima di ogni servizio.|
+1|Posizione|Dietro la linea.|
+2|Rimbalzi|Due o tre volte, sempre lo stesso numero.|
+3|Scansione|Mano, spalla, mandibola.|
+4|Respiro|Uno lento.|
+5|Visualizza|Dove vuoi mandare la palla.|
+6|Colpisci||
+FOCUS|Meno carico cognitivo|Riattiva i pattern automatici, esce dal circolo ansioso.|
+SE CAMBI NUMERO|Scegline uno|Due o tre rimbalzi, sempre uguali, anche in allenamento.|
+#M4 Reset a tre tempi
+DRILL M4 · livello 4|Reset|Tre secondi dopo l'errore, poi sei già al punto dopo.|
+1|Riconosci|Un secondo: ho sbagliato il drop.|
+2|Correggi|Visualizza l'esecuzione corretta.|
+3|Chiudi|Un gesto fisico: giri la racchetta, tocchi la linea.|
+DOPO|Archiviato|Dal quarto secondo in poi sei al punto successivo.|Interno, poi esterno ristretto
+SE CI PENSI ANCORA|Aggiungi una parola|Di' via o basta insieme al gesto: motorio più verbale.|
+#M5 Mano non dominante
+DRILL M5 · livello 3|20 per cento|Su dieci palleggi da fondo campo.|
+8|Mano dominante|Esecuzione normale, focus tecnico.|
+2|Mano non dominante|Focus su sensazione ed equilibrio.|
+FOCUS|Bilaterale|Consapevolezza senza destabilizzare lo schema dominante.|Attivazione interemisferica
+NOTE|Mai in apertura|Prima consolida il gesto dominante.|
+SE TI DESTABILIZZA|Scendi a 1 su 10|Se persiste, sospendi e torna alla sola dominante.|
+#M6 Flow bilaterale
+DRILL M6 · livello 3|Incrociato|Palleggio lento: braccio destro avanti mentre avanza la gamba sinistra.|
+VARIANTE|Tocco al fianco|Palleggi con la dominante, l'altra tocca il fianco opposto a ogni colpo.|
+FOCUS|Neurologico|Sincronia fra i due emisferi, condizione del flow.|Non è un drill atletico
+NOTE|La lentezza è voluta|Movimenti consapevoli, non veloci.|
+SE NON COORDINI|Senza racchetta|Cammina abbinando braccio e gamba opposti. Poi aggiungi la racchetta.|
