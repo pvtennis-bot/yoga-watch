@@ -42,3 +42,5 @@ VARIANTE|Tocco al fianco|Palleggi con la dominante, l'altra tocca il fianco oppo
 FOCUS|Neurologico|Sincronia fra i due emisferi, condizione del flow.|Non è un drill atletico
 NOTE|La lentezza è voluta|Movimenti consapevoli, non veloci.|
 SE NON COORDINI|Senza racchetta|Cammina abbinando braccio e gamba opposti. Poi aggiungi la racchetta.|
+#Info
+DAL LIBRO|Continuiamo a giocare a pickleball|Tattica, tecnica, gioco di gambe, prevenzione.|Patrizio Virga
