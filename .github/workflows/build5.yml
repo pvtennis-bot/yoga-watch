@@ -1,0 +1,177 @@
+name: MENTAL2
+on: [push, workflow_dispatch]
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Progetto
+        run: |
+          rm -rf n && mkdir -p n/app/src/main/java/it/patri/mental n/app/src/main/assets n/app/src/main/res/drawable
+          cp drills.txt n/app/src/main/assets/drills.txt
+          cd n
+          cat > settings.gradle <<'E'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          include ':app'
+          E
+          cat > build.gradle <<'E'
+          plugins { id 'com.android.application' version '8.7.3' apply false }
+          E
+          cat > app/build.gradle <<'E'
+          plugins { id 'com.android.application' }
+          android {
+            namespace 'it.patri.mental'
+            compileSdk 35
+            defaultConfig { applicationId 'it.patri.mental'; minSdk 30; targetSdk 34; versionCode 4; versionName '3.0' }
+            compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17; encoding 'UTF-8' }
+          }
+          E
+          cat > app/src/main/AndroidManifest.xml <<'E'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+          <uses-feature android:name="android.hardware.type.watch"/>
+          <application android:label="Mental" android:icon="@drawable/ic" android:roundIcon="@drawable/ic">
+          <meta-data android:name="com.google.android.wearable.standalone" android:value="true"/>
+          <activity android:name=".MainActivity" android:exported="true" android:label="Mental">
+          <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+          </activity></application></manifest>
+          E
+          cat > app/src/main/res/drawable/ic.xml <<'E'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="108dp" android:height="108dp"
+              android:viewportWidth="108" android:viewportHeight="108">
+            <path android:fillColor="#101010" android:pathData="M0,0h108v108h-108z"/>
+            <path android:strokeColor="#6E9B84" android:strokeWidth="5" android:fillColor="#00000000"
+                android:pathData="M54,22 C70,22 80,34 80,48 C80,60 72,64 72,74 L36,74 C36,64 28,60 28,48 C28,34 38,22 54,22 Z"/>
+            <path android:strokeColor="#6E9B84" android:strokeWidth="5" android:strokeLineCap="round"
+                android:fillColor="#00000000" android:pathData="M42,84 H66 M46,92 H62"/>
+            <path android:fillColor="#E3C08D" android:pathData="M54,38m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0z"/>
+            <path android:fillColor="#E3C08D" android:pathData="M40,56m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0z"/>
+            <path android:fillColor="#E3C08D" android:pathData="M68,56m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0z"/>
+          </vector>
+          E
+          cat > app/src/main/java/it/patri/mental/MainActivity.java <<'E'
+          package it.patri.mental;
+          import android.app.Activity;
+          import android.content.Context;
+          import android.graphics.Canvas;
+          import android.graphics.Paint;
+          import android.os.Bundle;
+          import android.view.MotionEvent;
+          import android.view.View;
+          import android.view.WindowManager;
+          import java.io.BufferedReader;
+          import java.io.InputStreamReader;
+          import java.util.ArrayList;
+          public class MainActivity extends Activity {
+            ArrayList<String> nomi = new ArrayList<String>();
+            ArrayList<ArrayList<String[]>> sch = new ArrayList<ArrayList<String[]>>();
+            int drill = -1, pag = 0;
+            @Override
+            protected void onCreate(Bundle b) {
+              super.onCreate(b);
+              getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+              carica();
+              setContentView(new Vista(this));
+            }
+            void carica() {
+              try {
+                BufferedReader r = new BufferedReader(new InputStreamReader(getAssets().open("drills.txt"), "UTF-8"));
+                String l;
+                ArrayList<String[]> cur = null;
+                while ((l = r.readLine()) != null) {
+                  l = l.trim();
+                  if (l.length() == 0) continue;
+                  if (l.charAt(0) == '#') {
+                    nomi.add(l.substring(1));
+                    cur = new ArrayList<String[]>();
+                    sch.add(cur);
+                  } else if (cur != null) {
+                    String[] p = l.split("\\|", -1);
+                    String[] s = {"", "", "", ""};
+                    for (int j = 0; j < 4 && j < p.length; j++) s[j] = p[j];
+                    cur.add(s);
+                  }
+                }
+                r.close();
+              } catch (Exception e) {
+                nomi.add("Errore lettura");
+                sch.add(new ArrayList<String[]>());
+              }
+            }
+            class Vista extends View {
+              Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
+              float top, passo;
+              Vista(Context c) { super(c); t.setTextAlign(Paint.Align.CENTER); }
+              float blocco(Canvas c, String s, float y, float w, float max, float lh) {
+                String riga = "";
+                for (String p : s.split(" ")) {
+                  String prova = riga.length() == 0 ? p : riga + " " + p;
+                  if (t.measureText(prova) > max) { c.drawText(riga, w / 2, y, t); y += lh; riga = p; }
+                  else riga = prova;
+                }
+                if (riga.length() > 0) { c.drawText(riga, w / 2, y, t); y += lh; }
+                return y;
+              }
+              @Override
+              protected void onDraw(Canvas c) {
+                float w = getWidth(), h = getHeight();
+                c.drawColor(0xFF000000);
+                if (drill < 0) {
+                  t.setColor(0xFFE3C08D); t.setTextSize(w * 0.075f);
+                  c.drawText("MENTAL", w / 2, h * 0.20f, t);
+                  int n = nomi.size();
+                  passo = h * 0.60f / (n < 1 ? 1 : n);
+                  top = h * 0.30f;
+                  t.setTextSize(w * 0.048f);
+                  for (int j = 0; j < n; j++) {
+                    t.setColor(0xFFF0EAE0);
+                    c.drawText(nomi.get(j), w / 2, top + passo * (j + 0.7f), t);
+                  }
+                  return;
+                }
+                ArrayList<String[]> d = sch.get(drill);
+                if (pag >= d.size()) { drill = -1; return; }
+                String[] q = d.get(pag);
+                float y = h * 0.22f;
+                t.setColor(0xFF8C857A); t.setTextSize(w * 0.038f);
+                y = blocco(c, q[0], y, w, w * 0.70f, w * 0.052f);
+                t.setColor(0xFFE3C08D); t.setTextSize(w * 0.078f);
+                y = blocco(c, q[1], y + w * 0.035f, w, w * 0.68f, w * 0.092f);
+                t.setColor(0xFFF0EAE0); t.setTextSize(w * 0.045f);
+                y = blocco(c, q[2], y + w * 0.045f, w, w * 0.66f, w * 0.057f);
+                if (q[3].length() > 0) {
+                  t.setColor(0xFF6E9B84); t.setTextSize(w * 0.038f);
+                  blocco(c, q[3], y + w * 0.04f, w, w * 0.66f, w * 0.050f);
+                }
+                t.setColor(0xFF8C857A); t.setTextSize(w * 0.042f);
+                c.drawText((pag + 1) + " / " + d.size(), w / 2, h * 0.94f, t);
+              }
+              @Override
+              public boolean onTouchEvent(MotionEvent e) {
+                if (e.getAction() != MotionEvent.ACTION_DOWN) return true;
+                if (drill < 0) {
+                  int j = (int) ((e.getY() - top) / passo);
+                  if (j >= 0 && j < nomi.size()) { drill = j; pag = 0; }
+                } else {
+                  if (e.getX() < getWidth() / 2) { pag--; if (pag < 0) drill = -1; }
+                  else { pag++; if (pag >= sch.get(drill).size()) drill = -1; }
+                }
+                invalidate();
+                return true;
+              }
+            }
+          }
+          E
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - run: cd n && gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mental2-apk
+          path: n/app/build/outputs/apk/debug/*.apk
