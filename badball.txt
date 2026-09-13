@@ -1,0 +1,49 @@
+#Il gioco
+BADBALL|Disciplina originale|Racchetta rigida, palla morbida, campo ridotto. Scambi rapidi e traiettorie manipolate.|Marchio registrato
+SCOPO|Un colpo in più|Far passare la palla sopra la rete e dentro il campo valido una volta in più dell'avversario.|
+SPAZIO|Meno di 70 mq|Superficie totale compreso il fuoricampo.|
+#Campo
+LUNGHEZZA|8,24 m|Larghezza 3,97 nel singolo, 4,57 nel doppio.|Tolleranza 1 cm
+ZONA FRANCA|2,14 m|Fascia oltre la rete: vietato colpire al volo al suo interno.|
+FONDOCAMPO|1,98 m|Zona franca dal fondo. Zona di battuta larga 1,52 m.|
+RETE|5,20 m|Altezza 91-92 cm ai lati, 86-87 al centro.|
+SPAZI|1,00 m lati|Minimo 1,50 m dietro i fondi. Linee da 5 cm.|
+#Le cinque zone
+1|Servizio|Area centrale di 1,52 m dietro il fondo.|
+2|Zona franca|Fascia di 2,14 m oltre la rete: niente volée.|
+3|Servizio alto|Metà campo entro la zona franca.|
+4|Servizio basso|Metà campo oltre la zona franca.|
+5|Corridoi|Strisce laterali, valide solo nel doppio durante lo scambio.|Mai sul servizio
+#Regole di base
+VINCOLO|Fuori dal campo|Tutti restano fuori dal campo fino al rimbalzo: è la regola che distingue il badball.|
+RISPOSTA|Dietro il fondo|Si resta dietro la linea di fondo fino al rimbalzo del servizio.|
+CHI SERVE|Aspetta|Attende il rimbalzo della risposta prima di entrare.|
+VOLÉE|Solo fuori|Vietata dentro la zona franca e sulla sua linea.|
+RIMBALZI|Uno solo|Vietato colpire dopo due rimbalzi.|
+#Servizio
+DALL'ALTO|Sopra la testa|Dalla zona centrale, piedi a terra. Area valida: la zona franca.|Va dichiarato prima
+DALL'ALTO|Due servizi|Con la dichiarazione vale il regime a 1° e 2° servizio, come nel tennis.|
+DALL'ALTO|Rete|Palla che tocca la rete in zona valida: let, si ripete.|
+DAL BASSO|Sotto la vita|Dalla zona centrale, piedi a terra. Area valida: oltre la zona franca.|
+DAL BASSO|Uno solo|Nessun secondo tentativo. Palla che tocca la rete: si gioca.|
+DOPPIO|Alternanza|I due della coppia si alternano alla battuta a ogni game al servizio.|
+#Sanzioni
+PUNTO PERSO|Entri prima|Entrare in campo prima del rimbalzo del servizio.|
+PUNTO PERSO|Servizio|Servire entrando in campo o staccando i piedi da terra.|
+PUNTO PERSO|Volée franca|Colpire al volo in zona franca, anche con i piedi sulla linea.|
+PUNTO PERSO|Due rimbalzi|Colpire dopo che la palla ha rimbalzato due volte.|
+PUNTO PERSO|Volo sulla risposta|Colpire al volo la risposta prima del rimbalzo.|
+#Punteggio
+PUNTI|15 30 40 Gioco||
+40 PARI|Punto secco|Nessun vantaggio: chi segna vince il game.|
+PARTITA|8 game|Vince chi arriva per primo a otto game.|
+7-7|Tie-break|Ai 7 punti, con due di vantaggio.|
+SERVIZIO|Si alterna|Le squadre cambiano battuta a ogni game.|
+#Racchetta e palla
+RACCHETTA|42-45 cm|Testa 20-22 cm, peso 180-260 g.|
+RACCHETTA|Sughero|Rigida e non abrasiva: il sughero naturale è la caratteristica distintiva.|
+PALLA|60-70 mm|Peso 18-25 g, gommapiuma espansa.|
+PALLA|Rimbalzo|Fra 45 e 65 cm da una caduta di 100 cm.|
+#Info
+MANUALE|Seconda edizione|Il regolamento completo è nel manuale ufficiale su Amazon KDP.|Patrizio Virga
+MARCHIO|BADBALL|Marchio registrato UIBM 302025000024018. Sito badball.it|
