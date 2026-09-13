@@ -11,7 +11,7 @@ jobs:
           java-version: '17'
       - name: Progetto
         run: |
-          mkdir -p app/src/main/java/y app/src/main/assets
+          mkdir -p app/src/main/java/it/patri/yoga app/src/main/assets
           cp index.html app/src/main/assets/index.html
           cat > settings.gradle <<'E'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
@@ -24,16 +24,56 @@ jobs:
           cat > app/build.gradle <<'E'
           plugins { id 'com.android.application' }
           android {
-            namespace 'y'
+            namespace 'it.patri.yoga'
             compileSdk 35
-            defaultConfig { applicationId 'it.patri.yoga'; minSdk 30; targetSdk 35; versionCode 1; versionName '1.0' }
+            defaultConfig { applicationId 'it.patri.yoga'; minSdk 30; targetSdk 34; versionCode 2; versionName '1.1' }
             compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
           }
           E
           cat > app/src/main/AndroidManifest.xml <<'E'
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
           <uses-feature android:name="android.hardware.type.watch"/>
-          <application android:label="Yoga" android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+          <application android:label="Yoga" android:hardwareAccelerated="true">
+          <meta-data android:name="com.google.android.wearable.standalone" android:value="true"/>
+          <activity android:name=".MainActivity" android:exported="true" android:label="Yoga">
+          <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+          </activity></application></manifest>
+          E
+          cat > app/src/main/java/it/patri/yoga/MainActivity.java <<'E'
+          package it.patri.yoga;
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.view.WindowManager;
+          import android.webkit.WebView;
+          import android.widget.TextView;
+          public class MainActivity extends Activity {
+            @Override
+            protected void onCreate(Bundle b) {
+              super.onCreate(b);
+              try {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                WebView w = new WebView(this);
+                w.getSettings().setJavaScriptEnabled(true);
+                w.setBackgroundColor(0xFF000000);
+                w.loadUrl("file:///android_asset/index.html");
+                setContentView(w);
+              } catch (Throwable t) {
+                TextView v = new TextView(this);
+                v.setText(String.valueOf(t));
+                v.setTextSize(9);
+                setContentView(v);
+              }
+            }
+          }
+          E
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - run: gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yoga-apk
+          path: app/build/outputs/apk/debug/*.apk
           <meta-data android:name="com.google.android.wearable.standalone" android:value="true"/>
           <activity android:name="y.M" android:exported="true">
           <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
